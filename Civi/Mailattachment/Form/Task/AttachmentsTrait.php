@@ -144,7 +144,6 @@ trait AttachmentsTrait
 
         // Let other extensions provide attachment types.
         $event = GenericHookEvent::create(['attachment_types' => &$attachment_types]);
-        // TODO: Why is the event not invoked for listeners (e.g. CiviOffice)?
         \Civi::dispatcher()->dispatch('civi.mailattachment.attachmentTypes', $event);
 
       // Add supported entity types to context for not allowing e.g. generating invoices for contacts.
