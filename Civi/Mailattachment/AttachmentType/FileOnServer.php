@@ -68,7 +68,26 @@ class FileOnServer implements AttachmentTypeInterface
 
     public static function buildAttachment($context, $attachment_values)
     {
-        $attachment_file = self::findAttachmentFile($context['entity_id'], $attachment_values['path']);
+        $file_context = [
+            $context['entity_type'] => $context['entity_id']
+        ];
+        switch ($context['entity_type']) {
+            case 'contribution':
+                $file_context['contact'] = \Civi\Api4\Contribution::get(FALSE)
+                    ->addWhere('id', '=', $context['entity_id'])
+                    ->addSelect('contact_id')
+                    ->execute()
+                    ->single()['contact_id'];
+                break;
+            case 'participant':
+                $file_context['contact'] = \Civi\Api4\Participant::get(FALSE)
+                    ->addWhere('id', '=', $context['entity_id'])
+                    ->addSelect('contact_id')
+                    ->execute()
+                    ->single()['contact_id'];
+                break;
+        }
+        $attachment_file = self::findAttachmentFile($file_context, $attachment_values['path']);
         if ($attachment_file) {
             $file_name = empty($attachment_values['name']) ? basename($attachment_file) : $attachment_values['name'];
             $attachment = [
@@ -92,11 +111,12 @@ class FileOnServer implements AttachmentTypeInterface
      * @return string|null
      *   full file path or null
      */
-    protected static function findAttachmentFile($contact_id, $path)
+    protected static function findAttachmentFile($context, $path)
     {
         if (!empty($path)) {
-            // replace {contact_id} token
-            $path = preg_replace('/[{]contact_id[}]/', $contact_id, $path);
+            foreach ($context as $entity_type => $entity_id) {
+                $path = preg_replace("/[{]{$entity_type}_id[}]/", $entity_id, $path);
+            }
             if (is_readable($path) && !is_dir($path)) {
                 return $path;
             }

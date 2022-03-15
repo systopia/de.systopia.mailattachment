@@ -131,7 +131,7 @@ trait AttachmentsTrait
             'label' => E::ts('File on Server'),
             'controller' => '\Civi\Mailattachment\AttachmentType\FileOnServer',
             'context' => [
-                'entity_types' => ['contact', 'contribution'],
+                'entity_types' => ['contact', 'contribution', 'participant'],
             ],
         ];
         $attachment_types['invoice'] = [
