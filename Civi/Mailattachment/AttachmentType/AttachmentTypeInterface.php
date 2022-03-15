@@ -23,32 +23,40 @@ interface AttachmentTypeInterface
     /**
      * TODO: Document what needs to be returned.
      *
-     * @param $form
-     * @param $attachment_id
+     * @param \CRM_Core_Form_Task $form
+     * @param int $attachment_id
      *
      * @return mixed
      */
     public static function buildAttachmentForm(&$form, $attachment_id);
 
+    /**
+     * TODO: Document what needs to be returned.
+     *
+     * @param \CRM_Core_Form_Task $form
+     * @param int $attachment_id
+     *
+     * @return mixed
+     */
     public static function processAttachmentForm(&$form, $attachment_id);
 
-  /**
-   * @param $context
-   *   An array with the following keys:
-   *   - "entitiy_type": The lowercase name of the CiviCRM entity type
-   *   - "entity_id": The ID of the CiviCRM entity
-   *   - "entity_ids": (optional) An array of all entity IDs involved (e.g. in a
-   *       batch)
-   *   - "entity": (optional) An array representation of the CiviCRM entity,
-   *       e.g. as returned by the API
-   *   - "extra": (optional) An array with extra information, e.g. related
-   *       CiviCRM entities as an entity type - entity ID mapping, e.g.
-   *       `['contact_id' => $contact_id]`
-   *
-   * @param $attachment_values
-   *
-   * @return mixed
-   */
+    /**
+     * @param $context
+     *   An array with the following keys:
+     *   - "entitiy_type": The lowercase name of the CiviCRM entity type
+     *   - "entity_id": The ID of the CiviCRM entity
+     *   - "entity_ids": (optional) An array of all entity IDs involved (e.g. in a
+     *       batch)
+     *   - "entity": (optional) An array representation of the CiviCRM entity,
+     *       e.g. as returned by the API
+     *   - "extra": (optional) An array with extra information, e.g. related
+     *       CiviCRM entities as an entity type - entity ID mapping, e.g.
+     *       `['contact_id' => $contact_id]`
+     *
+     * @param $attachment_values
+     *
+     * @return mixed
+     */
     public static function buildAttachment($context, $attachment_values);
 
     /**
