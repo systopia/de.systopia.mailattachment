@@ -61,6 +61,7 @@ trait AttachmentsTrait
             }
             /* @var \Civi\Mailattachment\AttachmentType\AttachmentTypeInterface $controller */
             $controller = $attachment_type['controller'];
+          $attachment_forms[$attachment_id]['title'] = $attachment_type['label'];
             $attachment_forms[$attachment_id]['elements'] = $controller::buildAttachmentForm(
                 $this,
                 $attachment_id

@@ -21,6 +21,9 @@
             <tr class="crm-mailattachment-attachment">
 
               <td style="width: 100%;">
+
+                  <h3>{$attachment.title}</h3>
+
                   {if $attachment.form_template}
                       {include file=$attachment.form_template}
                   {else}
@@ -41,6 +44,7 @@
                         </div>
                       {/foreach}
                   {/if}
+
               </td>
 
               <td>
