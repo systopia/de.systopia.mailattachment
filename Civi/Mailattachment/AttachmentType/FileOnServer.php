@@ -52,6 +52,11 @@ class FileOnServer implements AttachmentTypeInterface
         ];
     }
 
+    public static function getAttachmentFormTemplate($type = 'tpl')
+    {
+        return $type == 'hlp' ? 'Civi/Mailattachment/AttachmentType/FileOnServer.' . $type : null;
+    }
+
     public static function processAttachmentForm(&$form, $attachment_id)
     {
         $values = $form->exportValues();
