@@ -23,22 +23,24 @@ interface AttachmentTypeInterface
     /**
      * TODO: Document what needs to be returned.
      *
-     * @param \CRM_Core_Form_Task $form
+     * @param \CRM_Core_Form $form
      * @param int $attachment_id
+     * @param string $prefix
      *
      * @return mixed
      */
-    public static function buildAttachmentForm(&$form, $attachment_id);
+    public static function buildAttachmentForm(&$form, $attachment_id, $prefix = '');
 
     /**
      * TODO: Document what needs to be returned.
      *
-     * @param \CRM_Core_Form_Task $form
+     * @param \CRM_Core_Form $form
      * @param int $attachment_id
+     * @param string $prefix
      *
      * @return mixed
      */
-    public static function processAttachmentForm(&$form, $attachment_id);
+    public static function processAttachmentForm(&$form, $attachment_id, $prefix = '');
 
     /**
      * @param $context

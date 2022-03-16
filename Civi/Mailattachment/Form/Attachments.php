@@ -14,21 +14,24 @@
 | written permission from the original author(s).        |
 +--------------------------------------------------------*/
 
-namespace Civi\Mailattachment\Form\Task;
+namespace Civi\Mailattachment\Form;
 
 use Civi\Core\Event\GenericHookEvent;
 use Civi\FormProcessor\API\Exception;
 use CRM_Mailattachment_ExtensionUtil as E;
 
-/**
- * For use in classes extending CRM_Core_Form.
- */
-// TODO: Rename trait to denote being for forms
-trait AttachmentsTrait
+class Attachments
 {
-    public function addAttachmentElements($context = [])
+    /**
+     * @param \CRM_Core_Form $form
+     * @param $context
+     *
+     * @return void
+     * @throws \CRM_Core_Exception
+     * @throws \Civi\FormProcessor\API\Exception
+     */
+    public static function addAttachmentElements(&$form, $context = [])
     {
-        /* @var \CRM_Core_Form $this */
         $attachment_forms = [];
         $attachment_types = self::attachmentTypes($context);
         foreach ($attachment_types as &$attachment_type) {
@@ -42,7 +45,7 @@ trait AttachmentsTrait
         unset($attachment_type);
         // TODO: As default values, load from settings, which attachments used to be there the last time the form was built.
         $defaults = \Civi::settings()->get('mailattachment_attachments');
-        $attachments = $this->get('attachments');
+        $attachments = $form->get('attachments');
 
         $ajax_action = \CRM_Utils_Request::retrieve('ajax_action', 'String');
         if ($ajax_action == 'remove_attachment') {
@@ -53,7 +56,7 @@ trait AttachmentsTrait
             $attachment_type = \CRM_Utils_Request::retrieve('ajax_attachment_type', 'String');
             $attachments[] = ['type' => $attachment_type];
         }
-        $this->set('attachments', $attachments);
+        $form->set('attachments', $attachments);
 
         foreach ($attachments as $attachment_id => $attachment) {
             if (!$attachment_type = $attachment_types[$attachment['type']] ?? null) {
@@ -63,14 +66,15 @@ trait AttachmentsTrait
             $controller = $attachment_type['controller'];
             $attachment_forms[$attachment_id]['title'] = $attachment_type['label'];
             $attachment_forms[$attachment_id]['elements'] = $controller::buildAttachmentForm(
-                $this,
-                $attachment_id
+              $form,
+                $attachment_id,
+                $context['prefix'] ?? ''
             );
             $attachment_forms[$attachment_id]['form_template'] = $attachment_type['form_template'] ?? NULL;
             $attachment_forms[$attachment_id]['help_template'] = $attachment_type['help_template'] ?? NULL;
-            $this->add(
+            $form->add(
                 'button',
-                'attachments--' . $attachment_id . '_remove',
+                ($context['prefix'] ?? '') . 'attachments--' . $attachment_id . '_remove',
                 E::ts('Remove attachment'),
                 [
                     'data-attachment_id' => $attachment_id,
@@ -78,30 +82,36 @@ trait AttachmentsTrait
                 ]
             );
         }
-        $this->assign('attachment_forms', $attachment_forms);
+        $form->assign(($context['prefix'] ?? '') . 'attachment_forms', $attachment_forms);
 
-        $this->add(
+        $form->add(
             'select',
-            'attachments_more_type',
+            ($context['prefix'] ?? '') . 'attachments_more_type',
             E::ts('Attachment type'),
             array_map(function ($attachment_type) {
                 return $attachment_type['label'];
             }, $attachment_types)
         );
-        $this->add(
+        $form->add(
             'button',
-            'attachments_more',
+            ($context['prefix'] ?? '') . 'attachments_more',
             E::ts('Add attachment')
         );
         \CRM_Core_Resources::singleton()->addScriptFile(E::LONG_NAME, 'js/attachments.js', 1, 'html-header');
-        $this->addClass('crm-mailattachment-attachments-form');
-        $this->assign('supports_attachments', true);
+        $form->addClass('crm-mailattachment-attachments-form');
+        $form->assign('supports_attachments', true);
     }
 
-    public function processAttachments()
+    /**
+     * @param \CRM_Core_Form $form
+     *
+     * @return array
+     * @throws \Civi\FormProcessor\API\Exception
+     */
+    public static function processAttachments(&$form, $context = [])
     {
         $attachment_values = [];
-        $attachments = $this->get('attachments');
+        $attachments = $form->get('attachments');
         $attachment_types = self::attachmentTypes();
         foreach ($attachments as $attachment_id => $attachment) {
             if (!$attachment_type = $attachment_types[$attachment['type']] ?? null) {
@@ -110,8 +120,9 @@ trait AttachmentsTrait
             /* @var \Civi\Mailattachment\AttachmentType\AttachmentTypeInterface $controller */
             $controller = $attachment_type['controller'];
             $attachment_values[$attachment_id] = $controller::processAttachmentForm(
-                $this,
-                $attachment_id
+                $form,
+                $attachment_id,
+                $context['prefix'] ?? ''
             ) + ['type' => $attachment['type']];
         }
         // TODO: Is this setting even necessary?

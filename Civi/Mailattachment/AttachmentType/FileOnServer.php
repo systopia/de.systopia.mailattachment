@@ -23,17 +23,13 @@ class FileOnServer implements AttachmentTypeInterface
 {
 
     /**
-     * @param \CRM_Core_Form_Task $form
-     *
-     * @param int $attachment_id
-     *
-     * @return array
+     * {@inheritDoc}
      */
-    public static function buildAttachmentForm(&$form, $attachment_id)
+    public static function buildAttachmentForm(&$form, $attachment_id, $prefix = '')
     {
         $form->add(
             'text',
-            'attachments--' . $attachment_id . '--path',
+            $prefix . 'attachments--' . $attachment_id . '--path',
             E::ts('Attachment Path/URL'),
             ['class' => 'huge'],
             false
@@ -41,14 +37,14 @@ class FileOnServer implements AttachmentTypeInterface
 
         $form->add(
             'text',
-            'attachments--' . $attachment_id . '--name',
+            $prefix . 'attachments--' . $attachment_id . '--name',
             E::ts('Attachment Name'),
             ['class' => 'huge'],
             false
         );
         return [
-            'attachments--' . $attachment_id . '--path' => 'attachment-file_on_server-path',
-            'attachments--' . $attachment_id . '--name' => 'attachment-file_on_server-name',
+            $prefix . 'attachments--' . $attachment_id . '--path' => 'attachment-file_on_server-path',
+            $prefix . 'attachments--' . $attachment_id . '--name' => 'attachment-file_on_server-name',
         ];
     }
 
@@ -57,15 +53,21 @@ class FileOnServer implements AttachmentTypeInterface
         return $type == 'hlp' ? 'Civi/Mailattachment/AttachmentType/FileOnServer.' . $type : null;
     }
 
-    public static function processAttachmentForm(&$form, $attachment_id)
+    /**
+     * {@inheritDoc}
+     */
+    public static function processAttachmentForm(&$form, $attachment_id, $prefix = '')
     {
         $values = $form->exportValues();
         return [
-            'path' => $values['attachments--' . $attachment_id . '--path'],
-            'name' => $values['attachments--' . $attachment_id . '--name'],
+            'path' => $values[$prefix . 'attachments--' . $attachment_id . '--path'],
+            'name' => $values[$prefix . 'attachments--' . $attachment_id . '--name'],
         ];
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public static function buildAttachment($context, $attachment_values)
     {
         $file_context = [
