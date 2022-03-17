@@ -15,12 +15,13 @@
 {crmScope extensionKey='de.systopia.mailattachment'}
     {* $prefix is being handed in as an include parameter. *}
     {* TODO: Make sure $prefix is an empty string when it isn't provided. *}
-  <div id="crm-mailattachment-{$prefix}attachments-wrapper">
+  <div id="crm-mailattachment-{$prefix}attachments-wrapper" class="crm-mailattachment-attachments-wrapper" data-mailattachment-prefix="{$prefix}">
 
+    {if !empty($attachment_forms.$prefix)}
       <table class="crm-mailattachment-attachments-table row-highlight">
           <tbody>
           {* TODO: Fix variable variables access *}
-          {foreach from=${$prefix}attachment_forms item="attachment" key="attachment_id"}
+          {foreach from=$attachment_forms.$prefix item="attachment" key="attachment_id"}
             <tr class="crm-mailattachment-attachment">
 
               <td style="width: 100%;">
@@ -59,8 +60,11 @@
           {/foreach}
           </tbody>
       </table>
+    {/if}
 
-      {$form.attachments_more_type.html}
-      {$form.attachments_more.html}
+      {capture assign="attachment_more_type_name"}{$prefix}attachments_more_type{/capture}
+      {$form.$attachment_more_type_name.html}
+      {capture assign="attachment_more_button_name"}{$prefix}attachments_more{/capture}
+      {$form.$attachment_more_button_name.html}
   </div>
 {/crmScope}

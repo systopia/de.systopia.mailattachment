@@ -32,7 +32,8 @@ class Attachments
      */
     public static function addAttachmentElements(&$form, $context = [])
     {
-        $attachment_forms = [];
+        $prefix = $context['prefix'] ?? '';
+        $attachment_forms = $form->get_template_vars('attachment_forms') ?? [$prefix => []];
         $attachment_types = self::attachmentTypes($context);
         foreach ($attachment_types as &$attachment_type) {
             /* @var \Civi\Mailattachment\AttachmentType\AttachmentTypeInterface $controller */
@@ -45,36 +46,41 @@ class Attachments
         unset($attachment_type);
         // TODO: As default values, load from settings, which attachments used to be there the last time the form was built.
         $defaults = \Civi::settings()->get('mailattachment_attachments');
-        $attachments = $form->get('attachments');
+        
+        // TODO: This always returns nothing, find out where the session storage is being overwritten.
+        $attachments = $form->get('attachments') ?? [];
 
         $ajax_action = \CRM_Utils_Request::retrieve('ajax_action', 'String');
-        if ($ajax_action == 'remove_attachment') {
+        if (\CRM_Utils_Request::retrieve('ajax_attachments_prefix', 'String') == $prefix) {
+          if ($ajax_action == 'remove_attachment') {
             $attachment_id = \CRM_Utils_Request::retrieve('ajax_attachment_id', 'String');
-            unset($attachments[$attachment_id]);
-        }
-        if ($ajax_action == 'add_attachment') {
+            unset($attachments[$prefix][$attachment_id]);
+          }
+          if ($ajax_action == 'add_attachment') {
             $attachment_type = \CRM_Utils_Request::retrieve('ajax_attachment_type', 'String');
-            $attachments[] = ['type' => $attachment_type];
+            $attachments[$prefix][] = ['type' => $attachment_type];
+          }
         }
         $form->set('attachments', $attachments);
 
-        foreach ($attachments as $attachment_id => $attachment) {
+        $attachment_forms = $form->get_template_vars('attachment_forms') ?? [];
+        foreach ($attachments[$prefix] as $attachment_id => $attachment) {
             if (!$attachment_type = $attachment_types[$attachment['type']] ?? null) {
                 throw new Exception(E::ts('Unregistered attachment type %1', [1 => $attachment['type']]));
             }
             /* @var \Civi\Mailattachment\AttachmentType\AttachmentTypeInterface $controller */
             $controller = $attachment_type['controller'];
-            $attachment_forms[$attachment_id]['title'] = $attachment_type['label'];
-            $attachment_forms[$attachment_id]['elements'] = $controller::buildAttachmentForm(
+            $attachment_forms[$prefix][$attachment_id]['title'] = $attachment_type['label'];
+            $attachment_forms[$prefix][$attachment_id]['elements'] = $controller::buildAttachmentForm(
               $form,
                 $attachment_id,
-                $context['prefix'] ?? ''
+                $prefix
             );
-            $attachment_forms[$attachment_id]['form_template'] = $attachment_type['form_template'] ?? NULL;
-            $attachment_forms[$attachment_id]['help_template'] = $attachment_type['help_template'] ?? NULL;
+            $attachment_forms[$prefix][$attachment_id]['form_template'] = $attachment_type['form_template'] ?? NULL;
+            $attachment_forms[$prefix][$attachment_id]['help_template'] = $attachment_type['help_template'] ?? NULL;
             $form->add(
                 'button',
-                ($context['prefix'] ?? '') . 'attachments--' . $attachment_id . '_remove',
+                $prefix . 'attachments--' . $attachment_id . '_remove',
                 E::ts('Remove attachment'),
                 [
                     'data-attachment_id' => $attachment_id,
@@ -82,23 +88,33 @@ class Attachments
                 ]
             );
         }
-        $form->assign(($context['prefix'] ?? '') . 'attachment_forms', $attachment_forms);
+        $form->assign('attachment_forms', $attachment_forms);
 
         $form->add(
             'select',
-            ($context['prefix'] ?? '') . 'attachments_more_type',
+            $prefix . 'attachments_more_type',
             E::ts('Attachment type'),
             array_map(function ($attachment_type) {
                 return $attachment_type['label'];
-            }, $attachment_types)
+            }, $attachment_types),
+            FALSE,
+            [
+                'class' => 'crm-mailattachment-attachment-more-type',
+            ]
         );
         $form->add(
             'button',
-            ($context['prefix'] ?? '') . 'attachments_more',
-            E::ts('Add attachment')
+            $prefix . 'attachments_more',
+            E::ts('Add attachment'),
+            [
+                'class' => 'crm-mailattachment-attachment-more',
+            ]
         );
         \CRM_Core_Resources::singleton()->addScriptFile(E::LONG_NAME, 'js/attachments.js', 1, 'html-header');
-        $form->addClass('crm-mailattachment-attachments-form');
+        $formClasses = explode(' ', $form->getAttribute('class') ?? '');
+        if (!in_array('crm-mailattachment-attachments-form', $formClasses)) {
+          $form->addClass('crm-mailattachment-attachments-form');
+        }
         $form->assign('supports_attachments', true);
     }
 
@@ -111,6 +127,7 @@ class Attachments
     public static function processAttachments(&$form, $context = [])
     {
         $attachment_values = [];
+        $prefix = $context['prefix'] ?? '';
         $attachments = $form->get('attachments');
         $attachment_types = self::attachmentTypes();
         foreach ($attachments as $attachment_id => $attachment) {
@@ -122,7 +139,7 @@ class Attachments
             $attachment_values[$attachment_id] = $controller::processAttachmentForm(
                 $form,
                 $attachment_id,
-                $context['prefix'] ?? ''
+                $prefix
             ) + ['type' => $attachment['type']];
         }
         // TODO: Is this setting even necessary?

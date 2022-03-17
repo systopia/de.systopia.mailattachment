@@ -22,105 +22,119 @@
   };
 
   var mailattachmentBehavior = function() {
-    if (this == document) {
-      var $form = $(this).find('form.crm-mailattachment-attachments-form');
+    var $forms;
+    if ($(this).is('form.crm-mailattachment-attachments-form')) {
+      $forms = $(this);
+    }
+    else if (this === document) {
+      $forms = $(this).find('form.crm-mailattachment-attachments-form');
     }
     else {
-      var $form = $(this).closest('form.crm-mailattachment-attachments-form');
+      $forms = $(this).closest('form.crm-mailattachment-attachments-form');
     }
-    var $attachmentsWrapper = $form.find('#crm-mailattachment-attachments-wrapper');
-    $attachmentsWrapper
-      .css('position', 'relative')
-      .append(
-        $('<div>')
-          .hide()
-          .addClass('loading-overlay')
-          .css({
-            backgroundColor: 'rgba(255, 255, 255, 0.5)',
-            position: 'absolute',
-            top: 0,
-            right: 0,
-            bottom: 0,
-            left: 0
-          })
+    $forms.each(function() {
+      var $form = $(this);
+      var $attachmentsWrappers = $form.find('.crm-mailattachment-attachments-wrapper');
+      $attachmentsWrappers
+          .css('position', 'relative')
           .append(
-            $('<div>')
-              .addClass('crm-loading-element')
-              .css({
-                position: 'absolute',
-                left: '50%',
-                top: '50%',
-                marginLeft: '-15px',
-                marginTop: '-15px'
-              })
-          )
-      );
+              $('<div>')
+                  .hide()
+                  .addClass('loading-overlay')
+                  .css({
+                    backgroundColor: 'rgba(255, 255, 255, 0.5)',
+                    position: 'absolute',
+                    top: 0,
+                    right: 0,
+                    bottom: 0,
+                    left: 0
+                  })
+                  .append(
+                      $('<div>')
+                          .addClass('crm-loading-element')
+                          .css({
+                            position: 'absolute',
+                            left: '50%',
+                            top: '50%',
+                            marginLeft: '-15px',
+                            marginTop: '-15px'
+                          })
+                  )
+          );
 
-    $('#attachments_more', $attachmentsWrapper)
-      .on('click', function() {
-        var urlSearchparams = new URLSearchParams(window.location.search);
-        urlSearchparams.append('ajax_action', 'add_attachment');
-        var postValues = {
-          qfKey: $form.find('[name="qfKey"]').val(),
-          ajax_context: 'attachments',
-          ajax_action: 'add_attachment',
-          ajax_attachment_type: $attachmentsWrapper.find('[name="attachments_more_type"]').val(),
-          snippet: 6
-        };
-        var $currentAttachments = $attachmentsWrapper.find('[name^="attachments--"]');
-        $currentAttachments.each(function() {
-          postValues[$(this).attr('name')] = $(this).val();
-        });
+      $('.crm-mailattachment-attachment-more', $attachmentsWrappers)
+          .on('click', function() {
+            var $currentAttachmentsWrapper = $(this).closest('.crm-mailattachment-attachments-wrapper');
+            var currentPrefix = $currentAttachmentsWrapper.data('mailattachment-prefix');
+            var urlSearchparams = new URLSearchParams(window.location.search);
+            urlSearchparams.append('ajax_action', 'add_attachment');
+            var postValues = {
+              qfKey: $form.find('[name="qfKey"]').val(),
+              ajax_context: 'attachments',
+              ajax_action: 'add_attachment',
+              ajax_attachment_type: $currentAttachmentsWrapper.find('.crm-mailattachment-attachment-more-type').val(),
+              ajax_attachments_prefix: $currentAttachmentsWrapper.data('mailattachment-prefix'),
+              snippet: 6
+            };
+            var $currentAttachments = $currentAttachmentsWrapper.find('[name^="' + currentPrefix + 'attachments--"]');
+            $currentAttachments.each(function() {
+              postValues[$(this).attr('name')] = $(this).val();
+            });
 
-        $attachmentsWrapper.find('.loading-overlay').show();
+            $currentAttachmentsWrapper.find('.loading-overlay').show();
 
-        // Retrieve the form with another attachment field.
-        $.post(
-          location.href,
-          postValues,
-          function(data) {
-            $attachmentsWrapper
-              .replaceWith($(data.content)
-                .find('#crm-mailattachment-attachments-wrapper')
-                .each(mailattachmentBehavior)
-              );
-          }
-        );
-      });
+            // Retrieve the form with another attachment field.
+            $.post(
+                location.href,
+                postValues,
+                function(data) {
+                  $currentAttachmentsWrapper
+                      .replaceWith($(data.content)
+                          .find('#crm-mailattachment-' + currentPrefix + 'attachments-wrapper')
+                          .each(mailattachmentBehavior)
+                      );
+                }
+            );
+          });
 
-    $('.crm-mailattachment-attachment-remove', $attachmentsWrapper)
-      .on('click', function() {
-        var urlSearchparams = new URLSearchParams(window.location.search);
-        urlSearchparams.append('ajax_action', 'remove_attachment');
-        var postValues = {
-          qfKey: $form.find('[name="qfKey"]').val(),
-          ajax_context: 'attachments',
-          ajax_action: 'remove_attachment',
-          ajax_attachment_id: $(this).data('attachment_id'),
-          snippet: 6
-        };
-        var $currentAttachments = $attachmentsWrapper.find('[name^="attachments--"]');
-        $currentAttachments.each(function() {
-          postValues[$(this).attr('name')] = $(this).val();
-        });
+      $('.crm-mailattachment-attachment-remove', $attachmentsWrappers)
+          .on('click', function() {
+            var $currentAttachmentsWrapper = $(this).closest('.crm-mailattachment-attachments-wrapper');
+            var currentPrefix = $currentAttachmentsWrapper.data('mailattachment-prefix');
+            var urlSearchparams = new URLSearchParams(window.location.search);
+            urlSearchparams.append('ajax_action', 'remove_attachment');
+            var postValues = {
+              qfKey: $form.find('[name="qfKey"]').val(),
+              ajax_context: 'attachments',
+              ajax_action: 'remove_attachment',
+              ajax_attachment_id: $(this).data('attachment_id'),
+              ajax_attachments_prefix: $currentAttachmentsWrapper.data('mailattachment-prefix'),
+              snippet: 6
+            };
+            var $currentAttachments = $currentAttachmentsWrapper.find('[name^="' + currentPrefix + 'attachments--"]');
+            $currentAttachments.each(function() {
+              postValues[$(this).attr('name')] = $(this).val();
+            });
 
-        $attachmentsWrapper.find('.loading-overlay').show();
+            $currentAttachmentsWrapper.find('.loading-overlay').show();
 
-        // Retrieve the form with another attachment field.
-        $.post(
-          location.href,
-          postValues,
-          function(data) {
-            $attachmentsWrapper
-              .replaceWith($(data.content)
-                .find('#crm-mailattachment-attachments-wrapper')
-                .each(mailattachmentBehavior)
-              );
-          }
-        );
-      });
+            // Retrieve the form with another attachment field.
+            $.post(
+                location.href,
+                postValues,
+                function(data) {
+                  $currentAttachmentsWrapper
+                      .replaceWith($(data.content)
+                          .find('#crm-mailattachment-' + currentPrefix + 'attachments-wrapper')
+                          .each(mailattachmentBehavior)
+                      );
+                }
+            );
+          });
+    });
   };
 
   $(document).ready(mailattachmentBehavior);
+  $(document).on('crmLoad', mailattachmentBehavior);
 
 })(CRM.$ || cj);
