@@ -24,7 +24,7 @@ class ContributionInvoice implements AttachmentTypeInterface
     /**
      * {@inheritDoc}
      */
-    public static function buildAttachmentForm(&$form, $attachment_id, $prefix = '')
+    public static function buildAttachmentForm(&$form, $attachment_id, $prefix = '', $defaults = [])
     {
         $form->add(
             'text',
@@ -33,6 +33,13 @@ class ContributionInvoice implements AttachmentTypeInterface
             ['class' => 'huge'],
             false
         );
+
+        $form->setDefaults(
+            [
+                $prefix . 'attachments--' . $attachment_id . '--name' => $defaults['name'] ?? '',
+            ]
+        );
+
         return [
             $prefix . 'attachments--' . $attachment_id . '--name' => 'attachment-contribution_invoice-name',
         ];

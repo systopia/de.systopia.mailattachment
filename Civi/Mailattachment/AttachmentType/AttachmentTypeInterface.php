@@ -26,10 +26,11 @@ interface AttachmentTypeInterface
      * @param \CRM_Core_Form $form
      * @param int $attachment_id
      * @param string $prefix
+     * @param array $defaults
      *
      * @return mixed
      */
-    public static function buildAttachmentForm(&$form, $attachment_id, $prefix = '');
+    public static function buildAttachmentForm(&$form, $attachment_id, $prefix = '', $defaults = []);
 
     /**
      * TODO: Document what needs to be returned.

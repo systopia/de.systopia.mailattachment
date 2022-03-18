@@ -25,7 +25,7 @@ class FileOnServer implements AttachmentTypeInterface
     /**
      * {@inheritDoc}
      */
-    public static function buildAttachmentForm(&$form, $attachment_id, $prefix = '')
+    public static function buildAttachmentForm(&$form, $attachment_id, $prefix = '', $defaults = [])
     {
         $form->add(
             'text',
@@ -42,6 +42,14 @@ class FileOnServer implements AttachmentTypeInterface
             ['class' => 'huge'],
             false
         );
+
+        $form->setDefaults(
+            [
+                $prefix . 'attachments--' . $attachment_id . '--path' => $defaults['path'] ?? '',
+                $prefix . 'attachments--' . $attachment_id . '--name' => $defaults['name'] ?? '',
+            ]
+        );
+
         return [
             $prefix . 'attachments--' . $attachment_id . '--path' => 'attachment-file_on_server-path',
             $prefix . 'attachments--' . $attachment_id . '--name' => 'attachment-file_on_server-name',
