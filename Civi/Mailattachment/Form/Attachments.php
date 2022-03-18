@@ -60,8 +60,8 @@ class Attachments
             $attachment_type = \CRM_Utils_Request::retrieve('ajax_attachment_type', 'String');
             $attachments[$prefix][] = ['type' => $attachment_type];
           }
+          $form->set('attachments', $attachments);
         }
-        $form->set('attachments', $attachments);
 
         $attachment_forms = $form->get_template_vars('attachment_forms') ?? [];
         foreach ($attachments[$prefix] as $attachment_id => $attachment) {
