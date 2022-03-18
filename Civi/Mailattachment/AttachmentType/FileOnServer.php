@@ -16,7 +16,7 @@
 
 namespace Civi\Mailattachment\AttachmentType;
 
-use Civi\Mailattachment\Form\Task\AttachmentsTrait;
+use Civi\Mailattachment\Form\Attachments;
 use CRM_Mailattachment_ExtensionUtil as E;
 
 class FileOnServer implements AttachmentTypeInterface
@@ -94,7 +94,7 @@ class FileOnServer implements AttachmentTypeInterface
             $file_name = empty($attachment_values['name']) ? basename($attachment_file) : $attachment_values['name'];
             $attachment = [
                 'fullPath' => $attachment_file,
-                'mime_type' => AttachmentsTrait::getMimeType($attachment_file),
+                'mime_type' => Attachments::getMimeType($attachment_file),
                 'cleanName' => $file_name,
             ];
         }

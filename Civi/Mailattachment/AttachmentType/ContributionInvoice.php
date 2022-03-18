@@ -16,7 +16,7 @@
 
 namespace Civi\Mailattachment\AttachmentType;
 
-use Civi\Mailattachment\Form\Task\AttachmentsTrait;
+use Civi\Mailattachment\Form\Attachments;
 use CRM_Mailattachment_ExtensionUtil as E;
 
 class ContributionInvoice implements AttachmentTypeInterface
@@ -71,7 +71,7 @@ class ContributionInvoice implements AttachmentTypeInterface
         file_put_contents($tmp_file_path, $invoice_pdf);
         return [
             'fullPath' => $tmp_file_path,
-            'mime_type' => AttachmentsTrait::getMimeType($tmp_file_path),
+            'mime_type' => Attachments::getMimeType($tmp_file_path),
             'cleanName' => $attachment_values['name'] ?: basename($tmp_file_path),
         ];
     }
