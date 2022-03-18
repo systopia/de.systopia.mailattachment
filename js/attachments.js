@@ -14,12 +14,26 @@
 +--------------------------------------------------------*/
 (function($) {
 
-  $.urlParam = function (name) {
-    var results = new RegExp('[\?&]' + name + '=([^&#]*)')
-      .exec(window.location.search);
+  function removeURLParameter(url, parameter) {
+    //prefer to use l.search if you have a location/link object
+    var urlparts = url.split('?');
+    if (urlparts.length >= 2) {
 
-    return (results !== null) ? results[1] || 0 : false;
-  };
+      var prefix = encodeURIComponent(parameter) + '=';
+      var pars = urlparts[1].split(/[&;]/g);
+
+      //reverse iteration as may be destructive
+      for (var i = pars.length; i-- > 0;) {
+        //idiom for string.startsWith
+        if (pars[i].lastIndexOf(prefix, 0) !== -1) {
+          pars.splice(i, 1);
+        }
+      }
+
+      return urlparts[0] + (pars.length > 0 ? '?' + pars.join('&') : '');
+    }
+    return url;
+  }
 
   var mailattachmentBehavior = function() {
     var $forms;
@@ -85,7 +99,7 @@
 
             // Retrieve the form with another attachment field.
             $.post(
-                location.href,
+                removeURLParameter(location.href, 'reset'),
                 postValues,
                 function(data) {
                   $currentAttachmentsWrapper
@@ -120,7 +134,7 @@
 
             // Retrieve the form with another attachment field.
             $.post(
-                location.href,
+                removeURLParameter(location.href, 'reset'),
                 postValues,
                 function(data) {
                   $currentAttachmentsWrapper
