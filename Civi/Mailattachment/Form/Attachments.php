@@ -47,7 +47,7 @@ class Attachments
         // TODO: As default values, load from settings, which attachments used to be there the last time the form was built.
         $defaults = \Civi::settings()->get('mailattachment_attachments');
         
-        // TODO: This always returns nothing, find out where the session storage is being overwritten.
+        // TODO: This always returns nothing when in a tab set, find out where the session storage is being overwritten.
         $attachments = $form->get('attachments') ?? [];
 
         $ajax_action = \CRM_Utils_Request::retrieve('ajax_action', 'String');
