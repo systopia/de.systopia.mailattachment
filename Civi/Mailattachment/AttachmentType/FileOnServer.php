@@ -99,11 +99,15 @@ class FileOnServer implements AttachmentTypeInterface
         }
         $attachment_file = self::findAttachmentFile($file_context, $attachment_values['path']);
         if ($attachment_file) {
-            $file_name = empty($attachment_values['name']) ? basename($attachment_file) : $attachment_values['name'];
+            $name_parts = explode('.', basename($attachment_file));
+            $file_extension = end($name_parts);
+            if (!empty($name_parts = explode('.', $attachment_values['name'])) && end($name_parts) != $file_extension) {
+                $attachment_values['name'] .= '.' . $file_extension;
+            }
             $attachment = [
                 'fullPath' => $attachment_file,
                 'mime_type' => Attachments::getMimeType($attachment_file),
-                'cleanName' => $file_name,
+                'cleanName' => empty($attachment_values['name']) ? basename($attachment_file) : $attachment_values['name'],
             ];
         }
         return $attachment ?? null;
