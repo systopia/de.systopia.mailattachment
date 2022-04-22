@@ -16,29 +16,32 @@
 
 namespace Civi\Mailattachment\AttachmentType;
 
-use Civi\Mailattachment\Form\Task\AttachmentsTrait;
+use Civi\Mailattachment\Form\Attachments;
 use CRM_Mailattachment_ExtensionUtil as E;
 
 class ContributionInvoice implements AttachmentTypeInterface
 {
     /**
-     * @param \CRM_Core_Form_Task $form
-     *
-     * @param int $attachment_id
-     *
-     * @return array
+     * {@inheritDoc}
      */
-    public static function buildAttachmentForm(&$form, $attachment_id)
+    public static function buildAttachmentForm(&$form, $attachment_id, $prefix = '', $defaults = [])
     {
         $form->add(
             'text',
-            'attachments--' . $attachment_id . '--name',
+            $prefix . 'attachments--' . $attachment_id . '--name',
             E::ts('Attachment Name'),
             ['class' => 'huge'],
             false
         );
+
+        $form->setDefaults(
+            [
+                $prefix . 'attachments--' . $attachment_id . '--name' => $defaults['name'] ?? '',
+            ]
+        );
+
         return [
-            'attachments--' . $attachment_id . '--name' => 'attachment-contribution_invoice-name',
+            $prefix . 'attachments--' . $attachment_id . '--name' => 'attachment-contribution_invoice-name',
         ];
     }
 
@@ -47,14 +50,20 @@ class ContributionInvoice implements AttachmentTypeInterface
         return $type == 'hlp' ? 'Civi/Mailattachment/AttachmentType/ContributionInvoice.' . $type : null;
     }
 
-    public static function processAttachmentForm(&$form, $attachment_id)
+    /**
+     * {@inheritDoc}
+     */
+    public static function processAttachmentForm(&$form, $attachment_id, $prefix = '')
     {
         $values = $form->exportValues();
         return [
-            'name' => $values['attachments--' . $attachment_id . '--name'],
+            'name' => $values[$prefix . 'attachments--' . $attachment_id . '--name'],
         ];
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public static function buildAttachment($context, $attachment_values)
     {
         // Generate an invoice.
@@ -69,7 +78,7 @@ class ContributionInvoice implements AttachmentTypeInterface
         file_put_contents($tmp_file_path, $invoice_pdf);
         return [
             'fullPath' => $tmp_file_path,
-            'mime_type' => AttachmentsTrait::getMimeType($tmp_file_path),
+            'mime_type' => Attachments::getMimeType($tmp_file_path),
             'cleanName' => $attachment_values['name'] ?: basename($tmp_file_path),
         ];
     }

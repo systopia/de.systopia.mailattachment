@@ -16,24 +16,20 @@
 
 namespace Civi\Mailattachment\AttachmentType;
 
-use Civi\Mailattachment\Form\Task\AttachmentsTrait;
+use Civi\Mailattachment\Form\Attachments;
 use CRM_Mailattachment_ExtensionUtil as E;
 
 class FileOnServer implements AttachmentTypeInterface
 {
 
     /**
-     * @param \CRM_Core_Form_Task $form
-     *
-     * @param int $attachment_id
-     *
-     * @return array
+     * {@inheritDoc}
      */
-    public static function buildAttachmentForm(&$form, $attachment_id)
+    public static function buildAttachmentForm(&$form, $attachment_id, $prefix = '', $defaults = [])
     {
         $form->add(
             'text',
-            'attachments--' . $attachment_id . '--path',
+            $prefix . 'attachments--' . $attachment_id . '--path',
             E::ts('Attachment Path/URL'),
             ['class' => 'huge'],
             false
@@ -41,14 +37,22 @@ class FileOnServer implements AttachmentTypeInterface
 
         $form->add(
             'text',
-            'attachments--' . $attachment_id . '--name',
+            $prefix . 'attachments--' . $attachment_id . '--name',
             E::ts('Attachment Name'),
             ['class' => 'huge'],
             false
         );
+
+        $form->setDefaults(
+            [
+                $prefix . 'attachments--' . $attachment_id . '--path' => $defaults['path'] ?? '',
+                $prefix . 'attachments--' . $attachment_id . '--name' => $defaults['name'] ?? '',
+            ]
+        );
+
         return [
-            'attachments--' . $attachment_id . '--path' => 'attachment-file_on_server-path',
-            'attachments--' . $attachment_id . '--name' => 'attachment-file_on_server-name',
+            $prefix . 'attachments--' . $attachment_id . '--path' => 'attachment-file_on_server-path',
+            $prefix . 'attachments--' . $attachment_id . '--name' => 'attachment-file_on_server-name',
         ];
     }
 
@@ -57,15 +61,21 @@ class FileOnServer implements AttachmentTypeInterface
         return $type == 'hlp' ? 'Civi/Mailattachment/AttachmentType/FileOnServer.' . $type : null;
     }
 
-    public static function processAttachmentForm(&$form, $attachment_id)
+    /**
+     * {@inheritDoc}
+     */
+    public static function processAttachmentForm(&$form, $attachment_id, $prefix = '')
     {
         $values = $form->exportValues();
         return [
-            'path' => $values['attachments--' . $attachment_id . '--path'],
-            'name' => $values['attachments--' . $attachment_id . '--name'],
+            'path' => $values[$prefix . 'attachments--' . $attachment_id . '--path'],
+            'name' => $values[$prefix . 'attachments--' . $attachment_id . '--name'],
         ];
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public static function buildAttachment($context, $attachment_values)
     {
         $file_context = [
@@ -89,11 +99,15 @@ class FileOnServer implements AttachmentTypeInterface
         }
         $attachment_file = self::findAttachmentFile($file_context, $attachment_values['path']);
         if ($attachment_file) {
-            $file_name = empty($attachment_values['name']) ? basename($attachment_file) : $attachment_values['name'];
+            $name_parts = explode('.', basename($attachment_file));
+            $file_extension = end($name_parts);
+            if (!empty($name_parts = explode('.', $attachment_values['name'])) && end($name_parts) != $file_extension) {
+                $attachment_values['name'] .= '.' . $file_extension;
+            }
             $attachment = [
                 'fullPath' => $attachment_file,
-                'mime_type' => AttachmentsTrait::getMimeType($attachment_file),
-                'cleanName' => $file_name,
+                'mime_type' => Attachments::getMimeType($attachment_file),
+                'cleanName' => empty($attachment_values['name']) ? basename($attachment_file) : $attachment_values['name'],
             ];
         }
         return $attachment ?? null;
