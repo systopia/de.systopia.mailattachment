@@ -10,7 +10,7 @@ with the same user interface when it comes to e-mail attachments.
 
 The form widget allows users to add as many attachments as they want in an Ajax-
 powered manner without the need of re-submitting the form in-between, and also
-removing them. Re-arranging them with drag-and-drop is not yet supported.
+removing them.
 
 Each attachment can have specific form elements, such as the path for existing
 files for _File on Server_ type attachments, or a *Name* field for specifying
