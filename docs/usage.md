@@ -13,12 +13,12 @@ powered manner without the need of re-submitting the form in-between, and also
 removing them.
 
 Each attachment can have specific form elements, such as the path for existing
-files for _File on Server_ type attachments, or a *Name* field for specifying
-the file name of the attachment in the resulting e-mail. There are may also be
-attachments types without any input fields.
+files for _File on Server_ type attachments, or an *Attachment Name* field for
+specifying the file name of the attachment in the resulting e-mail. There may
+also be attachments types without any input fields.
 
 Adding attachments is done by selecting the attachment type from the drop-down
-field and clicking the _Add attachment_ button, which results in another
+field and clicking the _Add Attachment_ button, which results in another
 attachment being added to the list, and configuring this attachment
 appropriately.
 
