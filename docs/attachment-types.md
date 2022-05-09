@@ -13,7 +13,7 @@ properties and processing logic:
   e-mail processing
 
 Each attachment type defines which CiviCRM entities it is supposed to provide
-attachments for, e.g. it only makes sense to genereate contribution invoices for
+attachments for, e.g. it only makes sense to generate contribution invoices for
 contributions, or iCal files for events, while documents generated off of a
 message template makes sense for all entities that have a contact associated.
 
