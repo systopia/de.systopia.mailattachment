@@ -112,7 +112,7 @@ class Attachments
                 'class' => 'crm-mailattachment-attachment-more',
             ]
         );
-        \CRM_Core_Resources::singleton()->addScriptFile(E::LONG_NAME, 'js/attachments.js', 1, 'html-header');
+        \Civi::resources()->addScriptFile(E::LONG_NAME, 'js/attachments.js');
         $formClasses = explode(' ', $form->getAttribute('class') ?? '');
         if (!in_array('crm-mailattachment-attachments-form', $formClasses)) {
           $form->addClass('crm-mailattachment-attachments-form');
