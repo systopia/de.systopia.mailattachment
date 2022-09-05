@@ -46,9 +46,12 @@ class Attachments
 
         $defaults = $context['defaults'] ?? [];
         $attachments = $form->get('attachments') ?? [];
-        if (empty($attachments[$prefix]) && !empty($defaults)) {
-          $attachments[$prefix] = $defaults;
+        if (empty($attachments[$prefix])) {
+          $attachments[$prefix] = !empty($defaults) ? $defaults : [];
           $form->set('attachments', $attachments);
+        }
+        else {
+          $attachments[$prefix] = [];
         }
 
         $ajax_action = \CRM_Utils_Request::retrieve('ajax_action', 'String');
