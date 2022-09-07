@@ -50,9 +50,6 @@ class Attachments
           $attachments[$prefix] = !empty($defaults) ? $defaults : [];
           $form->set('attachments', $attachments);
         }
-        else {
-          $attachments[$prefix] = [];
-        }
 
         $ajax_action = \CRM_Utils_Request::retrieve('ajax_action', 'String');
         if (\CRM_Utils_Request::retrieve('ajax_attachments_prefix', 'String') == $prefix) {
