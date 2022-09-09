@@ -46,7 +46,7 @@ interface AttachmentTypeInterface
     /**
      * @param $context
      *   An array with the following keys:
-     *   - "entitiy_type": The lowercase name of the CiviCRM entity type
+     *   - "entity_type": The lowercase name of the CiviCRM entity type
      *   - "entity_id": The ID of the CiviCRM entity
      *   - "entity_ids": (optional) An array of all entity IDs involved (e.g. in a
      *       batch)
@@ -63,7 +63,7 @@ interface AttachmentTypeInterface
     public static function buildAttachment($context, $attachment_values);
 
     /**
-     * TODO: Optional pre-caching of attachments for a batch of entites to be
+     * TODO: Optional pre-caching of attachments for a batch of entities to be
      *       used in self::buildAttachment() instead of slow generation
      *       one-by-one.
      *
