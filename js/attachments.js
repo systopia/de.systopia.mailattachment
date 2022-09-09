@@ -80,7 +80,7 @@
 
         $currentAttachmentsWrapper.find('.loading-overlay').show();
 
-        // Retrieve the form with another attachment field.
+        // Retrieve the form with updated attachments.
         $.post(
             $form.attr('action'),
             postValues,
