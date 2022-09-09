@@ -59,15 +59,20 @@
         let $button = $(event.target);
         let $currentAttachmentsWrapper = $button.closest('.crm-mailattachment-attachments-wrapper');
         let currentPrefix = $currentAttachmentsWrapper.data('mailattachment-prefix');
-        let postValues = {
-          qfKey: $form.find('[name="qfKey"]').val(),
-          ajax_context: 'attachments',
-          ajax_action: $button.data('ajax_action'),
-          ajax_attachment_type: $currentAttachmentsWrapper.find('.crm-mailattachment-attachment-more-type').val(),
-          ajax_attachment_id: $button.data('attachment_id'),
-          ajax_attachments_prefix: $currentAttachmentsWrapper.data('mailattachment-prefix'),
-          snippet: 6
-        };
+        let urlParams = ((new URL(document.location)).searchParams);
+        urlParams.delete('reset');
+        let postValues = Object.assign(
+            {
+              qfKey: $form.find('[name="qfKey"]').val(),
+              ajax_context: 'attachments',
+              ajax_action: $button.data('ajax_action'),
+              ajax_attachment_type: $currentAttachmentsWrapper.find('.crm-mailattachment-attachment-more-type').val(),
+              ajax_attachment_id: $button.data('attachment_id'),
+              ajax_attachments_prefix: $currentAttachmentsWrapper.data('mailattachment-prefix'),
+              snippet: 6
+            },
+            Object.fromEntries(urlParams)
+        );
         let $currentAttachments = $currentAttachmentsWrapper.find('[name^="' + currentPrefix + 'attachments--"]');
         $currentAttachments.each(function() {
           postValues[$button.attr('name')] = $button.val();
