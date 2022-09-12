@@ -13,7 +13,7 @@ Extensions can implement the framework by:
 * providing attachment types that are being hooked up by the framework and made
   available to all extensions implementing the form.
 
-The extension is licensed under [AGPL-3.0](LICENSE.txt).
+The extension is licensed under [AGPL-3.0](https://www.gnu.org/licenses/agpl-3.0).
 
 ## Requirements
 
