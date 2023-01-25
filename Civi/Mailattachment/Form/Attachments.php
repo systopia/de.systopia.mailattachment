@@ -46,7 +46,7 @@ class Attachments
 
         $defaults = $context['defaults'] ?? [];
         $attachments = $form->get('attachments') ?? [];
-        if (empty($attachments[$prefix])) {
+        if (!isset($attachments[$prefix])) {
           $attachments[$prefix] = !empty($defaults) ? $defaults : [];
           $form->set('attachments', $attachments);
         }
