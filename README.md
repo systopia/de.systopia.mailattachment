@@ -15,6 +15,11 @@ Extensions can implement the framework by:
 
 The extension is licensed under [AGPL-3.0](https://www.gnu.org/licenses/agpl-3.0).
 
+
+## Documentation
+
+https://docs.civicrm.org/mailattachment/en/latest/ (EN)
+
 ## Requirements
 
 * PHP v7.2+
