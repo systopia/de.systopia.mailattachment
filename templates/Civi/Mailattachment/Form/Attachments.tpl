@@ -13,8 +13,8 @@
 +-------------------------------------------------------*}
 
 {crmScope extensionKey='de.systopia.mailattachment'}
-    {* $prefix is being handed in as an include parameter. *}
-    {* TODO: Make sure $prefix is an empty string when it isn't provided. *}
+  {* $prefix is being handed in as an include parameter. *}
+  {assign var='prefix' value=$prefix|default:''}
   <div id="crm-mailattachment-{$prefix}attachments-wrapper" class="crm-mailattachment-attachments-wrapper" data-mailattachment-prefix="{$prefix}">
 
     {if !empty($attachment_forms.$prefix)}
