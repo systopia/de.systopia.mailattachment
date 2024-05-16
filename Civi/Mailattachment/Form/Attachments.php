@@ -64,7 +64,11 @@ class Attachments
           $form->set('attachments', $attachments);
         }
 
-        $attachment_forms = $form->get_template_vars('attachment_forms') ?? [];
+        $attachment_forms = (
+            (method_exists($form, 'getTemplateVars'))
+                ? $form->getTemplateVars('attachment_forms')
+                : $form->get_template_vars('attachment_forms')
+        ) ?? [];
         foreach ($attachments[$prefix] as $attachment_id => $attachment) {
             if (!$attachment_type = $attachment_types[$attachment['type']] ?? null) {
                 throw new Exception(E::ts('Unregistered attachment type %1', [1 => $attachment['type']]));
