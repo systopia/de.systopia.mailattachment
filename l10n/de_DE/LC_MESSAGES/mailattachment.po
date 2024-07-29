@@ -1,0 +1,70 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: de_DE\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 3.0.1\n"
+
+#: Civi/Mailattachment/AttachmentType/ContributionInvoice.php
+#: Civi/Mailattachment/AttachmentType/FileOnServer.php
+msgid "Attachment Name"
+msgstr "Name des Anhangs"
+
+#: Civi/Mailattachment/AttachmentType/FileOnServer.php
+msgid "Attachment Path/URL"
+msgstr "Pfad/URL des Anhangs"
+
+#: Civi/Mailattachment/Form/Attachments.php
+msgid "Unregistered attachment type %1"
+msgstr "Unbekannter Anhangstyp %1"
+
+#: Civi/Mailattachment/Form/Attachments.php
+msgid "Remove attachment"
+msgstr "Anhang entfernen"
+
+#: Civi/Mailattachment/Form/Attachments.php
+msgid "Attachment type"
+msgstr "Anhangstyp"
+
+#: Civi/Mailattachment/Form/Attachments.php
+msgid "Add attachment"
+msgstr "Anhang hinzufügen"
+
+#: Civi/Mailattachment/Form/Attachments.php
+msgid "File on Server"
+msgstr "Datei auf Server"
+
+#: Civi/Mailattachment/Form/Attachments.php
+msgid "Contribution Invoice"
+msgstr "Rechnung für Zuwendung"
+
+#: templates/Civi/Mailattachment/AttachmentType/ContributionInvoice.hlp
+#: templates/Civi/Mailattachment/AttachmentType/FileOnServer.hlp
+msgid "This is the name under which the recipient will receive the attachment."
+msgstr "Dies ist der Name, unter dem der Empfänger den Anhang erhalten wird."
+
+#: templates/Civi/Mailattachment/AttachmentType/ContributionInvoice.hlp
+#: templates/Civi/Mailattachment/AttachmentType/FileOnServer.hlp
+msgid "Leave empty to go with the original name."
+msgstr "Leer lassen, um den ursprünglichen Namen zu verwenden."
+
+#: templates/Civi/Mailattachment/AttachmentType/FileOnServer.hlp
+msgid ""
+"This needs to specify an absolute file path that is accessible from CiviCRM."
+msgstr ""
+"Es muss ein absoluter von CiviCRM erreichbarer Dateipfad angegeben werden."
+
+#: templates/Civi/Mailattachment/AttachmentType/FileOnServer.hlp
+msgid ""
+"In Order to send different attachments per record, you can use the token %1 "
+"(and possibly %2, %3, or similar) in the filename."
+msgstr ""
+"Um unterschiedliche Anhänge je Datensatz zu versenden, kann der Platzhalter "
+"%1 (und ggf. %2, %3, o. Ä.) im Dateinamen verwendet werden."
