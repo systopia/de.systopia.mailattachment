@@ -1,0 +1,48 @@
+#: ./Civi/Mailattachment/AttachmentType/ContributionInvoice.php ./Civi/Mailattachment/AttachmentType/FileOnServer.php
+msgid "Attachment Name"
+msgstr ""
+
+#: ./Civi/Mailattachment/AttachmentType/FileOnServer.php
+msgid "Attachment Path/URL"
+msgstr ""
+
+#: ./Civi/Mailattachment/Form/Attachments.php
+msgid "Unregistered attachment type %1"
+msgstr ""
+
+#: ./Civi/Mailattachment/Form/Attachments.php
+msgid "Remove attachment"
+msgstr ""
+
+#: ./Civi/Mailattachment/Form/Attachments.php
+msgid "Attachment type"
+msgstr ""
+
+#: ./Civi/Mailattachment/Form/Attachments.php
+msgid "Add attachment"
+msgstr ""
+
+#: ./Civi/Mailattachment/Form/Attachments.php
+msgid "File on Server"
+msgstr ""
+
+#: ./Civi/Mailattachment/Form/Attachments.php
+msgid "Contribution Invoice"
+msgstr ""
+
+#: ./templates/Civi/Mailattachment/AttachmentType/ContributionInvoice.hlp ./templates/Civi/Mailattachment/AttachmentType/FileOnServer.hlp
+msgid "This is the name under which the recipient will receive the attachment."
+msgstr ""
+
+#: ./templates/Civi/Mailattachment/AttachmentType/ContributionInvoice.hlp ./templates/Civi/Mailattachment/AttachmentType/FileOnServer.hlp
+msgid "Leave empty to go with the original name."
+msgstr ""
+
+#: ./templates/Civi/Mailattachment/AttachmentType/FileOnServer.hlp
+msgid "This needs to specify an absolute file path that is accessible from CiviCRM."
+msgstr ""
+
+#: ./templates/Civi/Mailattachment/AttachmentType/FileOnServer.hlp
+msgid "In Order to send different attachments per record, you can use the token %1 (and possibly %2, %3, or similar) in the filename."
+msgstr ""
+
