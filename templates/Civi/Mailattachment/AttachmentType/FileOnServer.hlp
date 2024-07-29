@@ -15,7 +15,7 @@
 {crmScope extensionKey='de.systopia.mailattachment'}
 
 {htxt id='id-attachment-file_on_server-name'}
-{ts}This the the name the recipient will receive the attachment under.{/ts}
+{ts}This is the name under which the recipient will receive the attachment.{/ts}
 {ts}Leave empty to go with the original name.{/ts}
 {/htxt}
 
