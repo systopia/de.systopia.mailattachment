@@ -1,13 +1,13 @@
 site_name: Mail Attachments
-repo_url: https://github.com/systopia/de.systopia.mailattachment
 site_description: 'A guide for the Mail Attachments extension.'
-site_author: 'SYSTOPIA'
+site_author: SYSTOPIA
+site_url: https://github.com/systopia/de.systopia.mailattachment
+
 theme:
-  name:
-    material
+  name: material
 
 nav:
-  - Home: index.md
+  - Introduction: index.md
   - Attachment Types: attachment-types.md
   - Installation: installation.md
   - Usage: usage.md
@@ -17,10 +17,9 @@ markdown_extensions:
   - attr_list
   - admonition
   - def_list
-  - pymdownx.highlight:
-      guess_lang: false
+  - codehilite
   - toc:
-      permalink: true
+      permalink: True
   - pymdownx.superfences
   - pymdownx.inlinehilite
   - pymdownx.tilde
