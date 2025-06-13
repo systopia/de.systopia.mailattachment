@@ -14,6 +14,8 @@
 | written permission from the original author(s).        |
 +--------------------------------------------------------*/
 
+declare(strict_types = 1);
+
 namespace Civi\Mailattachment\AttachmentType;
 
 use CRM_Mailattachment_ExtensionUtil as E;
@@ -73,7 +75,9 @@ interface AttachmentTypeInterface {
      * @return bool
      *   Whether the caching was successful.
      */
-  //    public static function preCacheAttachments($context, $attachment_values);
+  // phpcs: disable Squiz.PHP.CommentedOutCode.Found
+  // public static function preCacheAttachments($context, $attachment_values);
+  // phpcs:enable
 
   /**
      * TODO: Inform attachment providers that things are done:
@@ -87,5 +91,7 @@ interface AttachmentTypeInterface {
      *
      * @return mixed
      */
-  //    public static function cleanUpAttachments($context);
+  // phpcs: disable Squiz.PHP.CommentedOutCode.Found
+  // public static function cleanUpAttachments($context);
+  // phpcs:enable
 }

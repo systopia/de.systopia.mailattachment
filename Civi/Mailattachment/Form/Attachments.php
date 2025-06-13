@@ -14,6 +14,8 @@
 | written permission from the original author(s).        |
 +--------------------------------------------------------*/
 
+declare(strict_types = 1);
+
 namespace Civi\Mailattachment\Form;
 
 use Civi\Core\Event\GenericHookEvent;
@@ -30,11 +32,13 @@ class Attachments {
    * @throws \CRM_Core_Exception
    * @throws \Civi\FormProcessor\API\Exception
    */
+  // phpcs:disable Generic.Metrics.CyclomaticComplexity.TooHigh
   public static function addAttachmentElements(&$form, $context = []) {
+    // phpcs: enable
     $prefix = $context['prefix'] ?? '';
     $attachment_types = self::attachmentTypes($context);
     foreach ($attachment_types as &$attachment_type) {
-      /* @var \Civi\Mailattachment\AttachmentType\AttachmentTypeInterface $controller */
+      /** @var \Civi\Mailattachment\AttachmentType\AttachmentTypeInterface $controller */
       $controller = $attachment_type['controller'];
       if (is_callable([$controller, 'getAttachmentFormTemplate'])) {
         $attachment_type['form_template'] = $controller::getAttachmentFormTemplate();
@@ -72,7 +76,7 @@ class Attachments {
       if (!$attachment_type = $attachment_types[$attachment['type']] ?? NULL) {
         throw new Exception(E::ts('Unregistered attachment type %1', [1 => $attachment['type']]));
       }
-      /* @var \Civi\Mailattachment\AttachmentType\AttachmentTypeInterface $controller */
+      /** @var \Civi\Mailattachment\AttachmentType\AttachmentTypeInterface $controller */
       $controller = $attachment_type['controller'];
       $attachment_forms[$prefix][$attachment_id]['title'] = $attachment_type['label'];
       $attachment_forms[$prefix][$attachment_id]['elements'] = $controller::buildAttachmentForm(
@@ -138,7 +142,7 @@ class Attachments {
       if (!$attachment_type = $attachment_types[$attachment['type']] ?? NULL) {
         throw new Exception(E::ts('Unregistered attachment type %1', [1 => $attachment['type']]));
       }
-      /* @var \Civi\Mailattachment\AttachmentType\AttachmentTypeInterface $controller */
+      /** @var \Civi\Mailattachment\AttachmentType\AttachmentTypeInterface $controller */
       $controller = $attachment_type['controller'];
       $attachment_values[$attachment_id] = $controller::processAttachmentForm(
         $form,

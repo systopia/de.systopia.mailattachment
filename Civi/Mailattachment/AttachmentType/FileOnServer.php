@@ -14,6 +14,8 @@
 | written permission from the original author(s).        |
 +--------------------------------------------------------*/
 
+declare(strict_types = 1);
+
 namespace Civi\Mailattachment\AttachmentType;
 
 use Civi\Mailattachment\Form\Attachments;
@@ -113,10 +115,9 @@ class FileOnServer implements AttachmentTypeInterface {
    * Try to find the attachment #{$index} based on the file path
    *   and the contact
    *
-   * @param integer $contact_id
-   *   contact ID
+   * @param array $context
    *
-   *   index
+   * @param string $path
    *
    * @return string|null
    *   full file path or null
