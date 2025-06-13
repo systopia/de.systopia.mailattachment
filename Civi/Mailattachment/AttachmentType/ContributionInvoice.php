@@ -46,8 +46,13 @@ class ContributionInvoice implements AttachmentTypeInterface {
     ];
   }
 
+  /**
+   * @param string $type
+   *
+   * @return string|null
+   */
   public static function getAttachmentFormTemplate($type = 'tpl') {
-    return $type == 'hlp' ? 'Civi/Mailattachment/AttachmentType/ContributionInvoice.' . $type : NULL;
+    return $type === 'hlp' ? 'Civi/Mailattachment/AttachmentType/ContributionInvoice.' . $type : NULL;
   }
 
   /**
@@ -69,7 +74,7 @@ class ContributionInvoice implements AttachmentTypeInterface {
     $invoice_html = \CRM_Contribute_Form_Task_Invoice::printPDF(
         [$context['entity_id']],
         $params,
-        [$context['extra']['contact_id']]
+        isset($context['extra']['contact_id']) ? [$context['extra']['contact_id']] : []
     );
     $invoice_pdf = \CRM_Utils_PDF_Utils::html2pdf($invoice_html, 'invoice.pdf', TRUE);
     $tmp_file_path = tempnam(sys_get_temp_dir(), 'invoice-') . '.pdf';
@@ -77,7 +82,7 @@ class ContributionInvoice implements AttachmentTypeInterface {
     return [
       'fullPath' => $tmp_file_path,
       'mime_type' => Attachments::getMimeType($tmp_file_path),
-      'cleanName' => $attachment_values['name'] ?: basename($tmp_file_path),
+      'cleanName' => '' === $attachment_values['name'] ? basename($tmp_file_path) : $attachment_values['name'],
     ];
   }
 

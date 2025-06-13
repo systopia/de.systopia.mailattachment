@@ -27,7 +27,7 @@ use CRM_Mailattachment_ExtensionUtil as E;
  *
  * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_config/
  */
-function mailattachment_civicrm_config(&$config) {
+function mailattachment_civicrm_config(\CRM_Core_Config &$config): void {
   _mailattachment_civix_civicrm_config($config);
 }
 
@@ -36,7 +36,7 @@ function mailattachment_civicrm_config(&$config) {
  *
  * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_install
  */
-function mailattachment_civicrm_install() {
+function mailattachment_civicrm_install(): void {
   _mailattachment_civix_civicrm_install();
 }
 
@@ -45,6 +45,6 @@ function mailattachment_civicrm_install() {
  *
  * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_enable
  */
-function mailattachment_civicrm_enable() {
+function mailattachment_civicrm_enable(): void {
   _mailattachment_civix_civicrm_enable();
 }

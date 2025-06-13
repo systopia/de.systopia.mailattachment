@@ -56,8 +56,13 @@ class FileOnServer implements AttachmentTypeInterface {
     ];
   }
 
+  /**
+   * @param string $type
+   *
+   * @return string|null
+   */
   public static function getAttachmentFormTemplate($type = 'tpl') {
-    return $type == 'hlp' ? 'Civi/Mailattachment/AttachmentType/FileOnServer.' . $type : NULL;
+    return $type === 'hlp' ? 'Civi/Mailattachment/AttachmentType/FileOnServer.' . $type : NULL;
   }
 
   /**
@@ -96,16 +101,17 @@ class FileOnServer implements AttachmentTypeInterface {
         break;
     }
     $attachment_file = self::findAttachmentFile($file_context, $attachment_values['path']);
-    if ($attachment_file) {
+    if (is_string($attachment_file)) {
       $name_parts = explode('.', basename($attachment_file));
       $file_extension = end($name_parts);
-      if (!empty($name_parts = explode('.', $attachment_values['name'])) && end($name_parts) != $file_extension) {
+      $name_parts = explode('.', $attachment_values['name']);
+      if ([] !== $name_parts && end($name_parts) !== $file_extension) {
         $attachment_values['name'] .= '.' . $file_extension;
       }
       $attachment = [
         'fullPath' => $attachment_file,
         'mime_type' => Attachments::getMimeType($attachment_file),
-        'cleanName' => empty($attachment_values['name']) ? basename($attachment_file) : $attachment_values['name'],
+        'cleanName' => '' === $attachment_values['name'] ? basename($attachment_file) : $attachment_values['name'],
       ];
     }
     return $attachment ?? NULL;
@@ -115,7 +121,7 @@ class FileOnServer implements AttachmentTypeInterface {
    * Try to find the attachment #{$index} based on the file path
    *   and the contact
    *
-   * @param array $context
+   * @param array<string, string> $context
    *
    * @param string $path
    *
@@ -123,11 +129,11 @@ class FileOnServer implements AttachmentTypeInterface {
    *   full file path or null
    */
   protected static function findAttachmentFile($context, $path) {
-    if (!empty($path)) {
+    if ('' !== $path) {
       foreach ($context as $entity_type => $entity_id) {
-        $path = preg_replace("/[{]{$entity_type}_id[}]/", $entity_id, $path);
+        $path = preg_replace("/[{]{$entity_type}_id[}]/", $entity_id, $path) ?? '';
       }
-      if (is_readable($path) && !is_dir($path)) {
+      if (is_string($path) && is_readable($path) && !is_dir($path)) {
         return $path;
       }
     }

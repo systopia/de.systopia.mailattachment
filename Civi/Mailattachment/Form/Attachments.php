@@ -19,18 +19,18 @@ declare(strict_types = 1);
 namespace Civi\Mailattachment\Form;
 
 use Civi\Core\Event\GenericHookEvent;
-use Civi\FormProcessor\API\Exception;
+use Civi\Mailattachment\AttachmentType\ContributionInvoice;
+use Civi\Mailattachment\AttachmentType\FileOnServer;
 use CRM_Mailattachment_ExtensionUtil as E;
 
 class Attachments {
 
   /**
    * @param \CRM_Core_Form $form
-   * @param $context
+   * @param array{prefix?: string, defaults?: array<string, mixed>} $context
    *
    * @return void
-   * @throws \CRM_Core_Exception
-   * @throws \Civi\FormProcessor\API\Exception
+   * @throws \Exception
    */
   // phpcs:disable Generic.Metrics.CyclomaticComplexity.TooHigh
   public static function addAttachmentElements(&$form, $context = []) {
@@ -38,7 +38,6 @@ class Attachments {
     $prefix = $context['prefix'] ?? '';
     $attachment_types = self::attachmentTypes($context);
     foreach ($attachment_types as &$attachment_type) {
-      /** @var \Civi\Mailattachment\AttachmentType\AttachmentTypeInterface $controller */
       $controller = $attachment_type['controller'];
       if (is_callable([$controller, 'getAttachmentFormTemplate'])) {
         $attachment_type['form_template'] = $controller::getAttachmentFormTemplate();
@@ -47,20 +46,20 @@ class Attachments {
     }
     unset($attachment_type);
 
-    $defaults = $context['defaults'] ?? [];
+    /** @phpstan-var array<string, array<int, array<string, mixed>>> $attachments */
     $attachments = $form->get('attachments') ?? [];
     if (!isset($attachments[$prefix])) {
-      $attachments[$prefix] = !empty($defaults) ? $defaults : [];
+      $attachments[$prefix] = $context['defaults'] ?? [];
       $form->set('attachments', $attachments);
     }
 
     $ajax_action = \CRM_Utils_Request::retrieve('ajax_action', 'String');
-    if (\CRM_Utils_Request::retrieve('ajax_attachments_prefix', 'String') == $prefix) {
-      if ($ajax_action == 'remove_attachment') {
+    if (\CRM_Utils_Request::retrieve('ajax_attachments_prefix', 'String') === $prefix) {
+      if ('remove_attachment' === $ajax_action) {
         $attachment_id = \CRM_Utils_Request::retrieve('ajax_attachment_id', 'String');
         unset($attachments[$prefix][$attachment_id]);
       }
-      if ($ajax_action == 'add_attachment') {
+      if ('add_attachment' === $ajax_action) {
         $attachment_type = \CRM_Utils_Request::retrieve('ajax_attachment_type', 'String');
         $attachments[$prefix][] = ['type' => $attachment_type];
       }
@@ -70,13 +69,14 @@ class Attachments {
     $attachment_forms = (
         (method_exists($form, 'getTemplateVars'))
             ? $form->getTemplateVars('attachment_forms')
+            // @phpstan-ignore method.deprecated
             : $form->get_template_vars('attachment_forms')
     ) ?? [];
     foreach ($attachments[$prefix] as $attachment_id => $attachment) {
-      if (!$attachment_type = $attachment_types[$attachment['type']] ?? NULL) {
-        throw new Exception(E::ts('Unregistered attachment type %1', [1 => $attachment['type']]));
+      $attachment_type = $attachment_types[$attachment['type']] ?? NULL;
+      if (!isset($attachment_type)) {
+        throw new \RuntimeException(E::ts('Unregistered attachment type %1', [1 => $attachment['type']]));
       }
-      /** @var \Civi\Mailattachment\AttachmentType\AttachmentTypeInterface $controller */
       $controller = $attachment_type['controller'];
       $attachment_forms[$prefix][$attachment_id]['title'] = $attachment_type['label'];
       $attachment_forms[$prefix][$attachment_id]['elements'] = $controller::buildAttachmentForm(
@@ -121,7 +121,7 @@ class Attachments {
     );
     \Civi::resources()->addScriptFile(E::LONG_NAME, 'js/attachments.js');
     $formClasses = explode(' ', $form->getAttribute('class') ?? '');
-    if (!in_array('crm-mailattachment-attachments-form', $formClasses)) {
+    if (!in_array('crm-mailattachment-attachments-form', $formClasses, TRUE)) {
       $form->addClass('crm-mailattachment-attachments-form');
     }
     $form->assign('supports_attachments', TRUE);
@@ -130,19 +130,22 @@ class Attachments {
   /**
    * @param \CRM_Core_Form $form
    *
-   * @return array
-   * @throws \Civi\FormProcessor\API\Exception
+   * @phpstan-param array{prefix?: string} $context
+   *
+   * @return array<int, array<string, mixed>>
+   * @throws \Exception
    */
   public static function processAttachments(&$form, $context = []) {
     $attachment_values = [];
     $prefix = $context['prefix'] ?? '';
+    /** @phpstan-var array<string, array<int, array<string, mixed>>> $attachments */
     $attachments = $form->get('attachments');
     $attachment_types = self::attachmentTypes();
     foreach ($attachments[$prefix] as $attachment_id => $attachment) {
-      if (!$attachment_type = $attachment_types[$attachment['type']] ?? NULL) {
-        throw new Exception(E::ts('Unregistered attachment type %1', [1 => $attachment['type']]));
+      $attachment_type = $attachment_types[$attachment['type']] ?? NULL;
+      if (!isset($attachment_type)) {
+        throw new \RuntimeException(E::ts('Unregistered attachment type %1', [1 => $attachment['type']]));
       }
-      /** @var \Civi\Mailattachment\AttachmentType\AttachmentTypeInterface $controller */
       $controller = $attachment_type['controller'];
       $attachment_values[$attachment_id] = $controller::processAttachmentForm(
         $form,
@@ -156,7 +159,16 @@ class Attachments {
   /**
    * Builds a list of registered attachment types.
    *
-   * @return array
+   * @phpstan-param array{
+   *   entity_type?: string,
+   *   entity_types?: list<string>
+   * } $context
+   *
+   * @phpstan-return array<string, array{
+   *   label: string,
+   *   controller: string,
+   *   context: ?array<string, mixed>
+   * }>
    *   The list of registered attachment types, indexed by their internal name.
    *
    */
@@ -165,14 +177,14 @@ class Attachments {
 
     $attachment_types['file_on_server'] = [
       'label' => E::ts('File on Server'),
-      'controller' => '\Civi\Mailattachment\AttachmentType\FileOnServer',
+      'controller' => FileOnServer::class,
       'context' => [
         'entity_types' => ['contact', 'contribution', 'participant'],
       ],
     ];
     $attachment_types['invoice'] = [
       'label' => E::ts('Contribution Invoice'),
-      'controller' => '\Civi\Mailattachment\AttachmentType\ContributionInvoice',
+      'controller' => ContributionInvoice::class,
       'context' => [
         'entity_types' => ['contribution'],
       ],
@@ -183,9 +195,10 @@ class Attachments {
     \Civi::dispatcher()->dispatch('civi.mailattachment.attachmentTypes', $event);
 
     // Add supported entity types to context for not allowing e.g. generating invoices for contacts.
-    return !empty($context['entity_type']) ? array_filter($attachment_types, function($attachment_type) use ($context) {
-      return empty($attachment_type['context']['entity_types'])
-        || in_array($context['entity_type'], $attachment_type['context']['entity_types']);
+    return isset($context['entity_type']) ? array_filter($attachment_types, function($attachment_type) use ($context) {
+      // @phpstan-ignore isset.offset
+      return !isset($attachment_type['context']['entity_types'])
+        || in_array($context['entity_type'], $attachment_type['context']['entity_types'], TRUE);
     }) : $attachment_types;
   }
 

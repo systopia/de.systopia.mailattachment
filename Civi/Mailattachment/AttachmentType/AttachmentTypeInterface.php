@@ -28,7 +28,7 @@ interface AttachmentTypeInterface {
    * @param \CRM_Core_Form $form
    * @param int $attachment_id
    * @param string $prefix
-   * @param array $defaults
+   * @param array<string, mixed> $defaults
    *
    * @return mixed
    */
@@ -46,19 +46,20 @@ interface AttachmentTypeInterface {
   public static function processAttachmentForm(&$form, $attachment_id, $prefix = '');
 
   /**
-   * @param $context
-   *   An array with the following keys:
-   *   - "entity_type": The lowercase name of the CiviCRM entity type
-   *   - "entity_id": The ID of the CiviCRM entity
-   *   - "entity_ids": (optional) An array of all entity IDs involved (e.g. in a
-   *       batch)
-   *   - "entity": (optional) An array representation of the CiviCRM entity,
-   *       e.g. as returned by the API
-   *   - "extra": (optional) An array with extra information, e.g. related
-   *       CiviCRM entities as an entity type - entity ID mapping, e.g.
-   *       `['contact_id' => $contact_id]`
+   * @phpstan-param array{
+   *   // The lowercase name of the CiviCRM entity type
+   *   entity_type: string,
+   *   // The ID of the CiviCRM entity
+   *   entity_id: string,
+   *   // An array of all entity IDs involved (e.g. in a batch)
+   *   entity_ids: ?list<int>,
+   *   // An array representation of the CiviCRM entity, e.g. as returned by the API
+   *   entity: ?array<string, mixed>,
+   *   // An array with extra information, e.g. related CiviCRM entities as an entity type - entity ID mapping
+   *   extra: ?array<string, mixed>
+   * } $context
    *
-   * @param $attachment_values
+   * @param array{path: string, name: string, extra?: mixed} $attachment_values
    *
    * @return mixed
    */
