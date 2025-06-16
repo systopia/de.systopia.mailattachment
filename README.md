@@ -18,9 +18,9 @@ The extension is licensed under [AGPL-3.0](https://www.gnu.org/licenses/agpl-3.0
 
 ## Documentation
 
-https://docs.civicrm.org/mailattachment/en/latest/ (EN)
+https://docs.civicrm.org/mailattachment (EN)
 
 ## Requirements
 
-* PHP v7.2+
-* CiviCRM 5.0
+* PHP v8.1
+* CiviCRM 5.81
