@@ -66,12 +66,7 @@ class Attachments {
       $form->set('attachments', $attachments);
     }
 
-    $attachment_forms = (
-        (method_exists($form, 'getTemplateVars'))
-            ? $form->getTemplateVars('attachment_forms')
-            // @phpstan-ignore method.deprecated
-            : $form->get_template_vars('attachment_forms')
-    ) ?? [];
+    $attachment_forms = $form->getTemplateVars('attachment_forms') ?? [];
     foreach ($attachments[$prefix] as $attachment_id => $attachment) {
       $attachment_type = $attachment_types[$attachment['type']] ?? NULL;
       if (!isset($attachment_type)) {
