@@ -131,9 +131,3 @@ jobs:
         export CV_CONFIG="$HOME/.cv.json"
         cd ../civicrm-standalone/ext/$(basename "$PWD")
         composer phpunit
-
-    - name: Debug pause
-      if: ${{ always() }}
-      run: |
-        echo "Container is sleeping for debug..."
-        sleep 3600
