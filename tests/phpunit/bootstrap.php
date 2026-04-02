@@ -10,21 +10,6 @@ if (file_exists(__DIR__ . '/bootstrap.local.php')) {
   require_once __DIR__ . '/bootstrap.local.php';
 }
 
-/*
- * The return value of this function call is used in the strftime()
- * implementation used in CiviCRM. If it is 'C' this results in this error:
- * datefmt_create: invalid locale: U_ILLEGAL_ARGUMENT_ERROR
- *
- * Patch applied by CiviCRM containing strftime():
- * https://patch-diff.githubusercontent.com/raw/pear/Log/pull/23.patch
- *
- * https://lab.civicrm.org/dev/core/-/issues/4739
- * Fixed in 5.67.0 https://github.com/civicrm/civicrm-core/pull/27981
- */
-if ('C' === setlocale(LC_TIME, '0')) {
-  setlocale(LC_TIME, 'en_US.UTF-8');
-}
-
 // phpcs:disable Drupal.Functions.DiscouragedFunctions.Discouraged
 eval(cv('php:boot --level=classloader', 'phpcode'));
 // phpcs:enable
@@ -40,7 +25,8 @@ require_once __DIR__ . '/../../mailattachment.civix.php';
 
 // Add test classes to class loader.
 addExtensionDirToClassLoader(__DIR__);
-addExtensionToClassLoader('de.systopia.mailattachment');
+
+require_once 'HTML/QuickForm/element.php';
 
 if (!function_exists('ts')) {
   // Ensure function ts() is available - it's declared in the same file as CRM_Core_I18n in CiviCRM < 5.74.
@@ -55,13 +41,27 @@ function _mailattachment_test_civicrm_container(ContainerBuilder $container): vo
 }
 
 function addExtensionToClassLoader(string $extension): void {
-  addExtensionDirToClassLoader(__DIR__ . '/../../../' . $extension);
+  $candidates = [
+    dirname((string) getenv('PWD')) . '/' . $extension,
+    __DIR__ . '/../../../' . $extension,
+  ];
+
+  foreach ($candidates as $candidate) {
+    $real = realpath($candidate);
+    if ($real !== FALSE && is_dir($real)) {
+      addExtensionDirToClassLoader($real);
+      return;
+    }
+  }
+
+  throw new RuntimeException("Extension path not found for: {$extension}");
 }
 
 function addExtensionDirToClassLoader(string $extensionDir): void {
   $loader = new ClassLoader();
   $loader->add('CRM_', [$extensionDir]);
   $loader->addPsr4('Civi\\', [$extensionDir . '/Civi']);
+  $loader->addPsr4('Civi\\MailAttachment\\Tests\\', [$extensionDir]);
   $loader->add('api_', [$extensionDir]);
   $loader->addPsr4('api\\', [$extensionDir . '/api']);
   $loader->register();

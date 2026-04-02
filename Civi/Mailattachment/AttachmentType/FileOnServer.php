@@ -105,7 +105,7 @@ class FileOnServer implements AttachmentTypeInterface {
       $name_parts = explode('.', basename($attachment_file));
       $file_extension = end($name_parts);
       $name_parts = explode('.', $attachment_values['name']);
-      if ([] !== $name_parts && end($name_parts) !== $file_extension) {
+      if (end($name_parts) !== $file_extension) {
         $attachment_values['name'] .= '.' . $file_extension;
       }
       $attachment = [
@@ -131,7 +131,7 @@ class FileOnServer implements AttachmentTypeInterface {
   protected static function findAttachmentFile($context, $path) {
     if ('' !== $path) {
       foreach ($context as $entity_type => $entity_id) {
-        $path = preg_replace("/[{]{$entity_type}_id[}]/", $entity_id, $path) ?? '';
+        $path = preg_replace("/[{]{$entity_type}_id[}]/", (string) $entity_id, $path) ?? '';
       }
       if (is_string($path) && is_readable($path) && !is_dir($path)) {
         return $path;

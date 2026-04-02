@@ -18,8 +18,6 @@ declare(strict_types = 1);
 
 namespace Civi\Mailattachment\AttachmentType;
 
-use CRM_Mailattachment_ExtensionUtil as E;
-
 interface AttachmentTypeInterface {
 
   /**
@@ -59,7 +57,7 @@ interface AttachmentTypeInterface {
    *   extra: ?array<string, mixed>
    * } $context
    *
-   * @param array{path: string, name: string, extra?: mixed} $attachment_values
+   * @param array{path: string, name: string, template_id: int, extra?: mixed} $attachment_values
    *
    * @return mixed
    */

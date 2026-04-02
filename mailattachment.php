@@ -17,7 +17,7 @@
 declare(strict_types = 1);
 
 // phpcs:disable PSR1.Files.SideEffects
-require_once 'mailattachment.civix.php';
+require_once __DIR__ . '/mailattachment.civix.php';
 // phpcs:enable
 
 use CRM_Mailattachment_ExtensionUtil as E;
