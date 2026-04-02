@@ -56,6 +56,7 @@ class Attachments {
     $ajax_action = \CRM_Utils_Request::retrieve('ajax_action', 'String');
     if (\CRM_Utils_Request::retrieve('ajax_attachments_prefix', 'String') === $prefix) {
       if ('remove_attachment' === $ajax_action) {
+        /** @var string $attachment_id */
         $attachment_id = \CRM_Utils_Request::retrieve('ajax_attachment_id', 'String');
         unset($attachments[$prefix][$attachment_id]);
       }
@@ -68,14 +69,17 @@ class Attachments {
 
     $attachment_forms = $form->getTemplateVars('attachment_forms') ?? [];
     foreach ($attachments[$prefix] as $attachment_id => $attachment) {
-      $attachment_type = $attachment_types[$attachment['type']] ?? NULL;
+      /** @var array{type: string} $attachment */
+      $type = $attachment['type'];
+
+      $attachment_type = $attachment_types[$type] ?? NULL;
       if (!isset($attachment_type)) {
         throw new \RuntimeException(E::ts('Unregistered attachment type %1', [1 => $attachment['type']]));
       }
       $controller = $attachment_type['controller'];
       $attachment_forms[$prefix][$attachment_id]['title'] = $attachment_type['label'];
       $attachment_forms[$prefix][$attachment_id]['elements'] = $controller::buildAttachmentForm(
-      $form,
+        $form,
         $attachment_id,
         $prefix,
         $attachment
@@ -95,24 +99,22 @@ class Attachments {
     $form->assign('attachment_forms', $attachment_forms);
 
     $form->add(
-        'select',
-        $prefix . 'attachments_more_type',
-        E::ts('Attachment type'),
-        array_map(function ($attachment_type) {
-            return $attachment_type['label'];
-        }, $attachment_types),
-        FALSE,
-        [
-          'class' => 'crm-mailattachment-attachment-more-type',
-        ]
+      'select',
+      $prefix . 'attachments_more_type',
+      E::ts('Attachment type'),
+      array_map(fn($attachment_type) => $attachment_type['label'], $attachment_types),
+      FALSE,
+      [
+        'class' => 'crm-mailattachment-attachment-more-type',
+      ]
     );
     $form->add(
-        'button',
-        $prefix . 'attachments_more',
-        E::ts('Add attachment'),
-        [
-          'class' => 'crm-mailattachment-attachment-more',
-        ]
+      'button',
+      $prefix . 'attachments_more',
+      E::ts('Add attachment'),
+      [
+        'class' => 'crm-mailattachment-attachment-more',
+      ]
     );
     \Civi::resources()->addScriptFile(E::LONG_NAME, 'js/attachments.js');
     $formClasses = explode(' ', $form->getAttribute('class') ?? '');
@@ -137,16 +139,19 @@ class Attachments {
     $attachments = $form->get('attachments');
     $attachment_types = self::attachmentTypes();
     foreach ($attachments[$prefix] as $attachment_id => $attachment) {
-      $attachment_type = $attachment_types[$attachment['type']] ?? NULL;
+      /** @var string $type */
+      $type = $attachment['type'];
+
+      $attachment_type = $attachment_types[$type] ?? NULL;
       if (!isset($attachment_type)) {
         throw new \RuntimeException(E::ts('Unregistered attachment type %1', [1 => $attachment['type']]));
       }
       $controller = $attachment_type['controller'];
       $attachment_values[$attachment_id] = $controller::processAttachmentForm(
-        $form,
-        $attachment_id,
-        $prefix
-      ) + ['type' => $attachment['type']];
+          $form,
+          $attachment_id,
+          $prefix
+        ) + ['type' => $attachment['type']];
     }
     return $attachment_values;
   }
@@ -190,11 +195,12 @@ class Attachments {
     \Civi::dispatcher()->dispatch('civi.mailattachment.attachmentTypes', $event);
 
     // Add supported entity types to context for not allowing e.g. generating invoices for contacts.
-    return isset($context['entity_type']) ? array_filter($attachment_types, function($attachment_type) use ($context) {
+    return isset($context['entity_type']) ? array_filter(
+      $attachment_types,
       // @phpstan-ignore isset.offset
-      return !isset($attachment_type['context']['entity_types'])
-        || in_array($context['entity_type'], $attachment_type['context']['entity_types'], TRUE);
-    }) : $attachment_types;
+      fn($attachment_type) => !isset($attachment_type['context']['entity_types'])
+        || in_array($context['entity_type'], $attachment_type['context']['entity_types'], TRUE)
+    ) : $attachment_types;
   }
 
   /**
