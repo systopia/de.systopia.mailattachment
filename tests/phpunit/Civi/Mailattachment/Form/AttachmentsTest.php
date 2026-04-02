@@ -1,14 +1,13 @@
 <?php
 declare(strict_types = 1);
 
-namespace Civi\MailAttachment\Tests\Civi\Mailattachment\Form;
+namespace Civi\Mailattachment\Form;
 
 use Civi\Core\Event\GenericHookEvent;
-use Civi\Mailattachment\Form\Attachments;
-use Civi\MailAttachment\Tests\HeadlessSetup;
-use Civi\MailAttachment\Tests\Support\DummyAttachmentController;
-use Civi\MailAttachment\Tests\Support\DummyForm;
-use Civi\MailAttachment\Tests\Support\DummyFormForAdd;
+use Civi\Mailattachment\Tests\HeadlessSetup;
+use Civi\Mailattachment\Tests\Support\DummyAttachmentController;
+use Civi\Mailattachment\Tests\Support\DummyForm;
+use Civi\Mailattachment\Tests\Support\DummyFormForAdd;
 use Civi\Test\TransactionalInterface;
 
 /**

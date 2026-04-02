@@ -1,6 +1,6 @@
 <?php declare(strict_types = 1);
 
-namespace Civi\MailAttachment\Tests\Support;
+namespace Civi\Mailattachment\Tests\Support;
 
 /**
  * Dummy controller used by tests via hook-provided attachment type.

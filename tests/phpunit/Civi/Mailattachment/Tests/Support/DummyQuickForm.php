@@ -1,6 +1,6 @@
 <?php declare(strict_types = 1);
 
-namespace Civi\MailAttachment\Tests\Support;
+namespace Civi\Mailattachment\Tests\Support;
 
 /**
  * Minimal QuickForm stub for ContributionInvoice::buildAttachmentForm/processAttachmentForm.
@@ -32,6 +32,7 @@ final class DummyQuickForm extends \CRM_Core_Form {
     $attributes = [],
     $required = FALSE,
     $extra = NULL
+    // @phpstan:ignore
   ): \HTML_QuickForm_element {
     $this->added[] = [
       'type' => $type,

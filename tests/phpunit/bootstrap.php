@@ -61,7 +61,6 @@ function addExtensionDirToClassLoader(string $extensionDir): void {
   $loader = new ClassLoader();
   $loader->add('CRM_', [$extensionDir]);
   $loader->addPsr4('Civi\\', [$extensionDir . '/Civi']);
-  $loader->addPsr4('Civi\\MailAttachment\\Tests\\', [$extensionDir]);
   $loader->add('api_', [$extensionDir]);
   $loader->addPsr4('api\\', [$extensionDir . '/api']);
   $loader->register();

@@ -5,4 +5,4 @@ parameters:
             message: '#Class HTML_QuickForm_element referenced with incorrect case: HTML_QuickForm_Element#'
             identifier: class.nameCase
             count: 1
-            path: tests/phpunit/Support/DummyQuickForm.php
+            path: tests/phpunit/Civi/Mailattachment/Tests/Support/DummyQuickForm.php

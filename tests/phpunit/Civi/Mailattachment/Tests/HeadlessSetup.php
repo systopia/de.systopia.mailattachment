@@ -1,7 +1,7 @@
 <?php
 declare(strict_types = 1);
 
-namespace Civi\MailAttachment\Tests;
+namespace Civi\Mailattachment\Tests;
 
 use Civi\Test\CiviEnvBuilder;
 use Civi\Test\HeadlessInterface;

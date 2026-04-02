@@ -2,12 +2,11 @@
 
 declare(strict_types = 1);
 
-namespace Civi\MailAttachment\Tests\Civi\Mailattachment\AttachmentType;
+namespace Civi\Mailattachment\AttachmentType;
 
-use Civi\Mailattachment\AttachmentType\ContributionInvoice;
-use Civi\MailAttachment\Tests\HeadlessSetup;
+use Civi\Mailattachment\Tests\HeadlessSetup;
 use Civi\Test\TransactionalInterface;
-use Civi\MailAttachment\Tests\Support\DummyQuickForm;
+use Civi\Mailattachment\Tests\Support\DummyQuickForm;
 use Systopia\TestFixtures\Fixtures\Scenarios\ContributionScenario;
 
 /**
