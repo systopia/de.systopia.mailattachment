@@ -67,6 +67,12 @@ class ContributionInvoice implements AttachmentTypeInterface {
 
   /**
    * {@inheritDoc}
+   *
+   * @phpstan-param array{
+   *   name: string,
+   * } $attachment_values
+   *
+   * @phpstan-ignore method.childParameterType
    */
   public static function buildAttachment($context, $attachment_values) {
     // Generate an invoice.

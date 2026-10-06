@@ -57,7 +57,7 @@ interface AttachmentTypeInterface {
    *   extra: ?array<string, mixed>
    * } $context
    *
-   * @param array{path: string, name: string, template_id: int, extra?: mixed} $attachment_values
+   * @param array<string, mixed> $attachment_values
    *
    * @return mixed
    */
