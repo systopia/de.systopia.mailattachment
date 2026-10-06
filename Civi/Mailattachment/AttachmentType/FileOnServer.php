@@ -78,6 +78,13 @@ class FileOnServer implements AttachmentTypeInterface {
 
   /**
    * {@inheritDoc}
+   *
+   * @phpstan-param array{
+   *   path: string,
+   *   name: string,
+   * } $attachment_values
+   *
+   * @phpstan-ignore method.childParameterType
    */
   public static function buildAttachment($context, $attachment_values) {
     $file_context = [
